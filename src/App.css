@@ -1,0 +1,5 @@
+.page{
+    margin: 0;
+    height: 90vh;
+    overflow: auto;
+}
