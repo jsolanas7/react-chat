@@ -8,15 +8,36 @@ import {urlSocket} from '../../enviroment/environment';
 const io = require('socket.io-client');
 const socket = io(urlSocket);
 
-const Chat = () => {
+const Chat = ({usersLogged, setUsersLogged}) => {
     // const listMessages = [" 24/11/2019 18:30  | Juan : Hola", "chau", "que tal"];
     const [receiveMessage, setReceiveMessage] = useState('');
     const [firstItems, setFirstItems] = useState('');
     const [messagesList, setMessagesList] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [userLogged, setUserLogged] = useState('');
+    const users = [];
 
+    useEffect(() => {
+        console.log(usersLogged);
+        let array = [];
+        usersLogged.forEach((item,i) => {
+            let  b = 0;
+            usersLogged.forEach((item2,j) => {
+                if(item == item2 && i == j){
+                    b = 1;
+                }
+            });
+            if(b == 0){
+                array.push(item);
+            }
+        })
+        setUserLogged(oldArray => [...oldArray,...array]);
+        return () => {
+            console.log('clean up');
+        }
+    }, [usersLogged]);
 
+    
     const scrollToBottom = () => {
         var objDiv = document.getElementById("divChat");
         if(objDiv){
@@ -33,7 +54,6 @@ const Chat = () => {
             console.log('finish get all');
         }
     }, []);
-
     const getAll = async () => {
         const resp = await getMessages();
         if (resp.length > 0 && resp) {
@@ -81,7 +101,15 @@ const Chat = () => {
         });
     }, [receiveMessage]);
 
-
+    const setUser = () => {
+        users.push(messageInput)
+        let unique = new Set(users);
+        const array = [];
+        unique.forEach(item => {
+            array.push(item);
+        })
+        setUsersLogged(array);
+    }
     const _handleKeyDown = (e) => {
         if (e.key === 'Enter') {
           send();
@@ -90,6 +118,7 @@ const Chat = () => {
     const send = async () => {
         if (messageInput != '') {
             await sendMessages(messageInput);
+            setUser();
             setMessageInput('');
         }
 
