@@ -82,7 +82,11 @@ const Chat = () => {
     }, [receiveMessage]);
 
 
-
+    const _handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+          send();
+        }
+      }
     const send = async () => {
         if (messageInput != '') {
             await sendMessages(messageInput);
@@ -110,7 +114,7 @@ const Chat = () => {
                 }
             </div>
             <div className="inputContainer">
-                <input value={messageInput} onChange={e => setMessageInput(e.target.value)} className="form-control"></input>
+                <input value={messageInput}  onKeyDown={e => _handleKeyDown(e)} onChange={e => setMessageInput(e.target.value)} className="form-control"></input>
                 <button onClick={() => send()} className="btn btn-info">Enviar</button>
             </div>
         </div>
