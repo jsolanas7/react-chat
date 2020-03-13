@@ -6,36 +6,31 @@ import { sendMessages, getMessages, getUserDataFromToken } from './chatService';
 import {urlSocket} from '../../enviroment/environment';
 
 const io = require('socket.io-client');
-const socket = io(urlSocket);
+const userName = getUserDataFromToken().fullName;
+const socket = io(urlSocket, {query: {name: userName }});
 
 const Chat = ({usersLogged, setUsersLogged}) => {
-    // const listMessages = [" 24/11/2019 18:30  | Juan : Hola", "chau", "que tal"];
     const [receiveMessage, setReceiveMessage] = useState('');
     const [firstItems, setFirstItems] = useState('');
     const [messagesList, setMessagesList] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [userLogged, setUserLogged] = useState('');
+    const [receiveClient, setReceiveClient] = useState('');
     const users = [];
 
     useEffect(() => {
-        console.log(usersLogged);
-        let array = [];
-        usersLogged.forEach((item,i) => {
-            let  b = 0;
-            usersLogged.forEach((item2,j) => {
-                if(item == item2 && i == j){
-                    b = 1;
-                }
-            });
-            if(b == 0){
-                array.push(item);
+        socket.on('connectClient', (req) => {
+            console.log(req);
+            console.log(usersLogged);
+            const isThere = usersLogged.find( x => x == req);
+            if(!isThere){
+                setUsersLogged(oldArray => [...oldArray, req]);
             }
-        })
-        setUserLogged(oldArray => [...oldArray,...array]);
+        });
         return () => {
             console.log('clean up');
-        }
-    }, [usersLogged]);
+        }   
+    }, [receiveClient]);
 
     
     const scrollToBottom = () => {
@@ -50,10 +45,13 @@ const Chat = ({usersLogged, setUsersLogged}) => {
         const userValues = getUserDataFromToken();
         setUserLogged(userValues.fullName);
         scrollToBottom();
+        
         return () => {
             console.log('finish get all');
         }
     }, []);
+    
+    
     const getAll = async () => {
         const resp = await getMessages();
         if (resp.length > 0 && resp) {
@@ -96,20 +94,20 @@ const Chat = ({usersLogged, setUsersLogged}) => {
             }]);
             scrollToBottom();
             return () => {
-                console.log('finish use effect');
+                socket.off('message', );
             }
         });
     }, [receiveMessage]);
 
-    const setUser = () => {
-        users.push(messageInput)
-        let unique = new Set(users);
-        const array = [];
-        unique.forEach(item => {
-            array.push(item);
-        })
-        setUsersLogged(array);
-    }
+    // const setUser = () => {
+    //     users.push(messageInput)
+    //     let unique = new Set(users);
+    //     const array = [];
+    //     unique.forEach(item => {
+    //         array.push(item);
+    //     })
+    //     setUsersLogged(array);
+    // }
     const _handleKeyDown = (e) => {
         if (e.key === 'Enter') {
           send();
@@ -118,7 +116,6 @@ const Chat = ({usersLogged, setUsersLogged}) => {
     const send = async () => {
         if (messageInput != '') {
             await sendMessages(messageInput);
-            setUser();
             setMessageInput('');
         }
 

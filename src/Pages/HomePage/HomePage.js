@@ -10,7 +10,7 @@ const HomePage = () => {
             {usersLogged.length > 0
             ?
                 usersLogged.map(item => {
-                    return(<p><strong>{item == undefined ? '' : item}</strong></p>)
+                    return(<p><strong>{item == undefined ? 'no ta' : item}</strong></p>)
                 })
             :
             <h3>No hay usuarios conectados</h3>
