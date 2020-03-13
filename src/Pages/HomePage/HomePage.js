@@ -6,7 +6,7 @@ const HomePage = () => {
     const [usersLogged, setUsersLogged] = useState([]);
     return(
     <div className="homePageContainer">
-        <div className="usersOnlineContainer">
+        {/* <div className="usersOnlineContainer">
             {usersLogged.length > 0
             ?
                 usersLogged.map(item => {
@@ -15,7 +15,7 @@ const HomePage = () => {
             :
             <h3>No hay usuarios conectados</h3>
             }
-        </div>
+        </div> */}
         <Chat
             usersLogged = {usersLogged}
             setUsersLogged = {setUsersLogged}
