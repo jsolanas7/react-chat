@@ -15,22 +15,20 @@ const Chat = ({usersLogged, setUsersLogged}) => {
     const [messagesList, setMessagesList] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [userLogged, setUserLogged] = useState('');
-    const [receiveClient, setReceiveClient] = useState('');
+    const [receiveUser, setReceiveUser] = useState('');
     const users = [];
 
     useEffect(() => {
-        socket.on('connectClient', (req) => {
-            console.log(req);
-            console.log(usersLogged);
-            const isThere = usersLogged.find( x => x == req);
+        socket.on('connectClient', (user) => {
+            const isThere = usersLogged.find( x => x == user);
             if(!isThere){
-                setUsersLogged(oldArray => [...oldArray, req]);
+                setUsersLogged(oldArray => [...oldArray, user]);
             }
         });
         return () => {
-            console.log('clean up');
+            console.log('finish receive user');
         }   
-    }, [receiveClient]);
+    }, [receiveUser]);
 
     
     const scrollToBottom = () => {
@@ -51,6 +49,29 @@ const Chat = ({usersLogged, setUsersLogged}) => {
         }
     }, []);
     
+    
+
+    useEffect(() => {
+        socket.on('recibirMensaje', async payload => {
+            const userValues = getUserDataFromToken();
+            let classMessages;
+            if (userValues.fullName == payload.user) {
+                classMessages = 'chatMessage chatMessageOwner';
+            } else {
+                classMessages = 'chatMessage';
+            }
+            setMessagesList(oldArray => [...oldArray, {
+                owner: payload.user,
+                message: payload.message,
+                date: payload.date,
+                classes: classMessages
+            }]);
+            scrollToBottom();
+            return () => {
+                socket.off('message', );
+            }
+        });
+    }, [receiveMessage]);
     
     const getAll = async () => {
         const resp = await getMessages();
@@ -77,37 +98,6 @@ const Chat = ({usersLogged, setUsersLogged}) => {
             console.log('llamo');
         }
     }
-    useEffect(() => {
-        socket.on('recibirMensaje', async payload => {
-            const userValues = getUserDataFromToken();
-            let classMessages;
-            if (userValues.fullName == payload.user) {
-                classMessages = 'chatMessage chatMessageOwner';
-            } else {
-                classMessages = 'chatMessage';
-            }
-            setMessagesList(oldArray => [...oldArray, {
-                owner: payload.user,
-                message: payload.message,
-                date: payload.date,
-                classes: classMessages
-            }]);
-            scrollToBottom();
-            return () => {
-                socket.off('message', );
-            }
-        });
-    }, [receiveMessage]);
-
-    // const setUser = () => {
-    //     users.push(messageInput)
-    //     let unique = new Set(users);
-    //     const array = [];
-    //     unique.forEach(item => {
-    //         array.push(item);
-    //     })
-    //     setUsersLogged(array);
-    // }
     const _handleKeyDown = (e) => {
         if (e.key === 'Enter') {
           send();

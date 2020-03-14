@@ -10,7 +10,21 @@
 
 .usersOnlineContainer{
     display:flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     width: 30%;
+    height: 90%;
+    width: 20%;
+    margin: 5px;
+    overflow: overlay;
+}
+
+.usersOnlineContainer p{
+    color: green;
+}
+
+.title{
+    width: 100%;
+    border-bottom: 2px solid black;
 }
