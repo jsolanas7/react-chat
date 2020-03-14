@@ -20,17 +20,19 @@ const Chat = ({usersLogged, setUsersLogged}) => {
     const [receiveUser, setReceiveUser] = useState('');
     const users = [];
 
-    useEffect(() => {
-        socket.on('connectClient', (user) => {
-            const isThere = usersLogged.find( x => x == user);
-            if(!isThere){
-                setUsersLogged(oldArray => [...oldArray, user]);
-            }
-        });
-        return () => {
-            console.log('finish receive user');
-        }   
-    }, [receiveUser]);
+
+    socket.on('connectClient', (user) => {
+        console.log('Se conecto un cliente')
+
+        // El socket actua como un "eventListener"
+        // Cuando se ejecuta el evento de connectClient este callback se va a disparar
+        // Por lo tanto, aca es donde se debe poner en linea al otro usuario.
+        // No hace falta usar useEffect.
+        const isThere = usersLogged.find(x => x == user);
+        if (!isThere) {
+            setUsersLogged(oldArray => [...oldArray, user]);
+        }
+    })
 
     
     const scrollToBottom = () => {
@@ -39,6 +41,8 @@ const Chat = ({usersLogged, setUsersLogged}) => {
             objDiv.scrollTop = objDiv.scrollHeight;
         }
     }
+
+    // En este hay que corregir/borrar ese return
     useEffect(async () => {
         
         await getAll();
