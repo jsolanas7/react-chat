@@ -8,10 +8,11 @@ const HomePage = () => {
     <div className="homePageContainer">
         <div className="usersOnlineContainer form-control">
             <h4 class='title'>Usuarios conectados</h4>
+
             {usersLogged.length > 0
             ?
                 usersLogged.map(item => {
-                    return(<p>&#9673; <strong>{item == undefined ? 'no ta' : item}</strong></p>)
+                    return(<p>&#9673; <strong>{item == undefined ? '' : item}</strong></p>)
                 })
             :
             <h3>No hay usuarios conectados</h3>
@@ -22,6 +23,7 @@ const HomePage = () => {
             setUsersLogged = {setUsersLogged}
         />
     </div>
+    
     )
 }
 

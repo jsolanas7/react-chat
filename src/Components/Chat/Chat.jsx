@@ -5,6 +5,8 @@ import './Chat.css';
 import { sendMessages, getMessages, getUserDataFromToken } from './chatService';
 import {urlSocket} from '../../enviroment/environment';
 
+import audio from '../../Assets/audios/sirena.mp3';
+
 const io = require('socket.io-client');
 const userName = getUserDataFromToken().fullName;
 const socket = io(urlSocket, {query: {name: userName }});
@@ -98,6 +100,40 @@ const Chat = ({usersLogged, setUsersLogged}) => {
             console.log('llamo');
         }
     }
+
+    useEffect(() => {
+        socket.on('recibirMensaje', async payload => {
+            // var audioListen = new Audio(audio);
+            // audioListen.play();
+            const userValues = getUserDataFromToken();
+            let classMessages;
+            if (userValues.fullName == payload.user) {
+                classMessages = 'chatMessage chatMessageOwner';
+            } else {
+                classMessages = 'chatMessage';
+            }
+            setMessagesList(oldArray => [...oldArray, {
+                owner: payload.user,
+                message: payload.message,
+                date: payload.date,
+                classes: classMessages
+            }]);
+            scrollToBottom();
+            return () => {
+                socket.off('message', );
+            }
+        });
+    }, [receiveMessage]);
+
+    // const setUser = () => {
+    //     users.push(messageInput)
+    //     let unique = new Set(users);
+    //     const array = [];
+    //     unique.forEach(item => {
+    //         array.push(item);
+    //     })
+    //     setUsersLogged(array);
+    // }
     const _handleKeyDown = (e) => {
         if (e.key === 'Enter') {
           send();
