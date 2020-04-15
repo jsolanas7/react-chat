@@ -26,7 +26,7 @@ const HomePage = () => {
     
     return(
     <div className="homePageContainer">
-        <div className="usersOnlineContainer form-control">
+        {/* <div className="usersOnlineContainer form-control">
             <h4 class='title'>Usuarios conectados</h4>
 
             {usersLogged.length > 0
@@ -37,7 +37,7 @@ const HomePage = () => {
             :
             <h3>No hay usuarios conectados</h3>
             }
-        </div>
+        </div> */}
         <Chat/>
     </div>
     
