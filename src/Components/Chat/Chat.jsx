@@ -11,14 +11,23 @@ const io = require('socket.io-client');
 const userName = getUserDataFromToken().fullName;
 const socket = io(urlSocket, {query: {name: userName }});
 
-const Chat = () => {
+const Chat = ({usersLogged, setUsersLogged, userConnected, setUserConnected}) => {
     const [receiveMessage, setReceiveMessage] = useState('');
     const [messagesList, setMessagesList] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [userLogged, setUserLogged] = useState('');
     const users = [];
 
-
+    socket.on('connectClient', (user) => {
+        setUserConnected(user);
+    });
+    useEffect(() => {
+        if(userConnected != ''){
+            if(usersLogged.indexOf(x => x == userConnected) == -1){
+                setUsersLogged(lastValues => [...lastValues, userConnected]);
+            }
+        }
+    }, [userConnected]);
     
     const scrollToBottom = () => {
         var objDiv = document.getElementById("divChat");

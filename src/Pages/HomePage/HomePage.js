@@ -1,30 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Chat from '../../Components/Chat/Chat';
 import './HomePage.css';
-import { getUserDataFromToken } from '../../Components/Chat/chatService';
-import {urlSocket} from '../../enviroment/environment';
 
-
-
-const io = require('socket.io-client');
-const userName = getUserDataFromToken().fullName;
-const socket = io(urlSocket, {query: {name: userName }});
 
 
 const HomePage = () => {
     const [usersLogged, setUsersLogged] = useState([]);
     const [userConnected, setUserConnected] = useState('');
 
-    socket.on('connectClient', (user) => {
-        setUserConnected(user);
-    });
-    useEffect(() => {
-        if(userConnected != ''){
-            if(usersLogged.indexOf(x => x == userConnected) == -1){
-                setUsersLogged(lastValues => [...lastValues, userConnected]);
-            }
-        }
-    }, [userConnected]);
+    
     return(
     <div className="homePageContainer">
         <div className="usersOnlineContainer form-control">
@@ -39,7 +23,12 @@ const HomePage = () => {
             <h3>No hay usuarios conectados</h3>
             }
         </div>
-        <Chat/>
+        <Chat
+        usersLogged = {usersLogged}
+        setUsersLogged = {setUsersLogged}
+        userConnected = {userConnected}
+        setUserConnected = {setUserConnected} 
+        />
     </div>
     
     )
