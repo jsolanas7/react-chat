@@ -13,20 +13,21 @@ const socket = io(urlSocket, {query: {name: userName }});
 
 const HomePage = () => {
     const [usersLogged, setUsersLogged] = useState([]);
+    const [userConnected, setUserConnected] = useState('');
 
-    
+    socket.on('connectClient', (user) => {
+        setUserConnected(user);
+    });
     useEffect(() => {
-        socket.on('connectClient', (user) => {
-            const isThere = usersLogged.indexOf(user);
-            if(isThere == -1){
-                setUsersLogged(oldArray => [...oldArray, user]);
+        if(userConnected != ''){
+            if(usersLogged.indexOf(x => x == userConnected) == -1){
+                setUsersLogged(lastValues => [...lastValues, userConnected]);
             }
-        });
-    }, [])
-    
+        }
+    }, [userConnected]);
     return(
     <div className="homePageContainer">
-        {/* <div className="usersOnlineContainer form-control">
+        <div className="usersOnlineContainer form-control">
             <h4 class='title'>Usuarios conectados</h4>
 
             {usersLogged.length > 0
@@ -37,7 +38,7 @@ const HomePage = () => {
             :
             <h3>No hay usuarios conectados</h3>
             }
-        </div> */}
+        </div>
         <Chat/>
     </div>
     
